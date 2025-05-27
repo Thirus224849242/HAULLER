@@ -18,23 +18,28 @@ pipeline {
         }
 
         stage('Test') {
-            steps {
-                echo '🧪 Installing dependencies and running server + tests...'
-                bat 'npm install'
+    steps {
+        echo '🧪 Installing dependencies and starting server...'
+        bat 'npm install'
 
-                echo '🚀 Starting server in background...'
-                bat 'start /b node server.js'
+        echo '🚀 Starting server in background...'
+        bat 'start /b node server.js'
 
-                echo '⏳ Waiting for server to be ready...'
-                bat 'powershell -Command "Start-Sleep -Seconds 5"'
+        echo '⏳ Waiting for server to be ready...'
+        bat 'npx wait-on http://localhost:4910'
 
-                echo '🧪 Running Mocha tests...'
-                bat 'npm test'
+        echo '🧪 Running Mocha tests...'
+        bat 'npm test'
 
-                echo '🛑 Killing background Node server...'
-                bat 'FOR /F "tokens=5" %%a IN (\'netstat -aon ^| findstr :4910\') DO taskkill /F /PID %%a'
-            }
-        }
+        echo '🛑 Killing background Node server...'
+        bat '''
+        FOR /F "tokens=5" %%a IN ('netstat -aon ^| findstr :4910') DO (
+            IF NOT "%%a"=="0" taskkill /F /PID %%a
+        )
+        '''
+    }
+}
+
 
         stage('SonarCloud Analysis') {
             steps {
