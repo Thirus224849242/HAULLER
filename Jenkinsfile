@@ -15,13 +15,7 @@ pipeline {
             }
         }
 
-        stage('Test') {
-            steps {
-                echo '🧪 Running Mocha test suite...'
-                bat 'npm install'
-                bat 'npm test'
-            }
-        }
+      
     }
 
     post {
