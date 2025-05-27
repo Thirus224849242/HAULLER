@@ -43,27 +43,20 @@ pipeline {
                     SET SONAR_SCANNER_HOME=%cd%\\sonar-scanner\\sonar-scanner-5.0.1.3006-windows
                     SET PATH=%SONAR_SCANNER_HOME%\\bin;%PATH%"
 
-                    echo JAVA_HOME is %JAVA_HOME%
-                    java -version
-
-                    sonar-scanner -Dsonar.login=%SONAR_TOKEN%
+                    sonar-scanner -Dsonar.token=%SONAR_TOKEN%
                     '''
                 }
             }
         }
 
         stage('Security') {
-           stage('Security') {
-    steps {
-        withCredentials([string(credentialsId: 'SNYK_TOKEN', variable: 'SNYK_TOKEN')]) {
-            bat 'echo 🔐 Installing Snyk...'
-            bat 'npm install -g snyk'
-            bat "snyk auth %SNYK_TOKEN%"
-            bat "snyk test --all-projects --severity-threshold=low || exit 0"
-        }
-    }
-}
-
+            steps {
+                withCredentials([string(credentialsId: 'SNYK_TOKEN', variable: 'SNYK_TOKEN')]) {
+                    bat 'npm install -g snyk'
+                    bat "snyk auth %SNYK_TOKEN%"
+                    bat "snyk test --all-projects --severity-threshold=low || exit 0"
+                }
+            }
         }
     }
 
