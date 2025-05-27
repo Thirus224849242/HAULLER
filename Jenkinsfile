@@ -53,18 +53,17 @@ pipeline {
         }
 
         stage('Security') {
-            steps {
-                withCredentials([string(credentialsId: 'SNYK_TOKEN', variable: 'SNYK_TOKEN')]) {
-                    bat '''
-                    echo 🔐 Installing and running Snyk security scan...
-                    npm install -g snyk
-                    snyk auth %SNYK_TOKEN%
+           stage('Security') {
+    steps {
+        withCredentials([string(credentialsId: 'SNYK_TOKEN', variable: 'SNYK_TOKEN')]) {
+            bat 'echo 🔐 Installing Snyk...'
+            bat 'npm install -g snyk'
+            bat "snyk auth %SNYK_TOKEN%"
+            bat "snyk test --all-projects --severity-threshold=low || exit 0"
+        }
+    }
+}
 
-                    REM Run scan and allow pipeline to continue even if issues found
-                    snyk test --all-projects --severity-threshold=low || echo "Snyk scan completed with issues"
-                    '''
-                }
-            }
         }
     }
 
