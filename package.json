@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "ute hauling services",
   "main": "server.js",
-  
   "scripts": {
     "test": "mocha test/*.js",
     "start": "node server.js"
@@ -36,6 +35,7 @@
     "chai": "^5.2.0",
     "mocha": "^11.5.0",
     "request": "^2.88.2",
+    "socket.io-client": "^4.8.1",
     "supertest": "^7.1.1"
   }
 }
