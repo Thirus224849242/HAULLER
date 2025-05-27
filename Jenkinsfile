@@ -5,7 +5,7 @@ pipeline {
         DOCKER_IMAGE = 's224849242-node-app:latest'
         SENDGRID_API_KEY = 'SG.dummykey'
         DB_CONNECTION = 'mongodb://localhost:27017/test'
-        
+         SONAR_TOKEN = credentials('SONAR_TOKEN')
     }
 
     stages {
@@ -25,7 +25,7 @@ pipeline {
 
 stage('SonarCloud Analysis') {
             steps {
-                withCredentials([string(credentialsId: 'SONAR_TOKEN1', variable: 'SONAR_TOKEN')]) {
+                withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]) {
                     bat '''
                     SET "JAVA_HOME=C:\\Program Files\\Java\\jdk-21"
                     SET "PATH=%JAVA_HOME%\\bin;%PATH%"
