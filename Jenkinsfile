@@ -56,8 +56,8 @@ stage('Security') {
                 withCredentials([string(credentialsId: 'SNYK_TOKEN', variable: 'SNYK_TOKEN')]) {
                     bat '''
                     npm install -g snyk
-                    snyk auth %SNYK_TOKEN%
-                    snyk test || exit 0
+                  snyk auth %SNYK_TOKEN%
+            snyk test --all-projects --severity-threshold=low
                     '''
                 }
             }
