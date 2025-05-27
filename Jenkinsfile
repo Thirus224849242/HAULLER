@@ -22,13 +22,32 @@ pipeline {
             }
         }
 
-stage('Code Quality') {
-  steps {
-    withSonarQubeEnv('SonarQube') {
-      bat 'SonarScanner.bat'
-    }
-  }
-}
+stage('SonarCloud Analysis') {
+            steps {
+                withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]) {
+                    bat '''
+                    SET "JAVA_HOME=C:\\Program Files\\Java\\jdk-21"
+                    SET "PATH=%JAVA_HOME%\\bin;%PATH%"
+                    java -version
+ 
+                    IF EXIST sonar-scanner (
+                        rmdir /s /q sonar-scanner
+                    )
+ 
+                    curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-windows.zip
+                    powershell -Command "Expand-Archive -Force sonar-scanner.zip -DestinationPath sonar-scanner"
+ 
+                    SET SONAR_SCANNER_HOME=%cd%\\sonar-scanner\\sonar-scanner-5.0.1.3006-windows
+                    SET PATH=%SONAR_SCANNER_HOME%\\bin;%PATH%
+ 
+                    echo JAVA_HOME is %JAVA_HOME%
+                    java -version
+ 
+                    sonar-scanner -Dsonar.login=%SONAR_TOKEN%
+                    '''
+                }
+            }
+        }
 
 
       
