@@ -14,6 +14,13 @@ pipeline {
                 bat 'docker build -t s224849242-node-app:latest .'
             }
         }
+           stage('Test') {
+            steps {
+                echo '🧪 Running Mocha tests...'
+                bat 'npm install'
+                bat 'npm test'
+            }
+        }
 
       
     }
