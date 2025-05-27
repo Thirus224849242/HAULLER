@@ -19,9 +19,20 @@ pipeline {
 
         stage('Test') {
             steps {
-                echo '🧪 Running Mocha tests...'
+                echo '🧪 Installing dependencies and running server + tests...'
                 bat 'npm install'
+
+                echo '🚀 Starting server in background...'
+                bat 'start /b node server.js'
+
+                echo '⏳ Waiting for server to be ready...'
+                bat 'powershell -Command "Start-Sleep -Seconds 5"'
+
+                echo '🧪 Running Mocha tests...'
                 bat 'npm test'
+
+                echo '🛑 Killing background Node server...'
+                bat 'FOR /F "tokens=5" %%a IN (\'netstat -aon ^| findstr :4910\') DO taskkill /F /PID %%a'
             }
         }
 
@@ -43,14 +54,12 @@ pipeline {
                     SET SONAR_SCANNER_HOME=%cd%\\sonar-scanner\\sonar-scanner-5.0.1.3006-windows
                     SET PATH=%SONAR_SCANNER_HOME%\\bin;%PATH%"
 
-                    echo JAVA_HOME is %JAVA_HOME%
-                    java -version
-
                     sonar-scanner -Dsonar.login=%SONAR_TOKEN%
                     '''
                 }
             }
         }
+
         stage('Security') {
             steps {
                 withCredentials([string(credentialsId: 'SNYK_TOKEN', variable: 'SNYK_TOKEN')]) {
@@ -60,16 +69,16 @@ pipeline {
                 }
             }
         }
-stage('Deploy') {
-    steps {
-        echo '🚀 Deploying the app to a Docker container test environment on port 4910...'
-        bat '''
-        docker rm -f hauller-test-app || echo "No existing container to remove"
-        docker run -d -p 4910:4910 --name hauller-test-app s224849242-node-app:latest
-        '''
-    }
-}
 
+        stage('Deploy') {
+            steps {
+                echo '🚀 Deploying the app to a Docker container test environment on port 4910...'
+                bat '''
+                docker rm -f hauller-test-app || echo "No existing container to remove"
+                docker run -d -p 4910:4910 --name hauller-test-app s224849242-node-app:latest
+                '''
+            }
+        }
     }
 
     post {
