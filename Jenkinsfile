@@ -50,6 +50,18 @@ stage('SonarCloud Analysis') {
             }
         }
 
+stage('Security') {
+            steps {
+                withCredentials([string(credentialsId: 'SNYK_TOKEN', variable: 'SNYK_TOKEN')]) {
+                    bat '''
+                    npm install -g snyk
+                    snyk auth %SNYK_TOKEN%
+                    snyk test || exit 0
+                    '''
+                }
+            }
+        }
+
 
       
     }
