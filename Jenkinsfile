@@ -6,6 +6,7 @@ pipeline {
         SENDGRID_API_KEY = 'SG.dummykey'
         DB_CONNECTION = 'mongodb://localhost:27017/test'
          SONAR_TOKEN = credentials('SONAR_TOKEN')
+        SNYK_TOKEN = credentials('SNYK_TOKEN')
     }
 
     stages {
