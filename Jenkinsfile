@@ -5,6 +5,7 @@ pipeline {
         DOCKER_IMAGE = 's224849242-node-app:latest'
         SENDGRID_API_KEY = 'SG.dummykey'
         DB_CONNECTION = 'mongodb://localhost:27017/test'
+        SONAR_TOKEN = credentials('SONAR_TOKEN')
     }
 
     stages {
