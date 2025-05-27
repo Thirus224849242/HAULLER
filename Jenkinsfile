@@ -22,6 +22,16 @@ pipeline {
             }
         }
 
+        stage('Code Quality') {
+  environment {
+    SONAR_TOKEN = credentials('SONAR_TOKEN')
+  }
+  steps {
+    bat 'sonar-scanner -Dsonar.login=%SONAR_TOKEN%'
+  }
+}
+
+
       
     }
 
