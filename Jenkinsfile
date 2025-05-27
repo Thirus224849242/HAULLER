@@ -43,12 +43,14 @@ pipeline {
                     SET SONAR_SCANNER_HOME=%cd%\\sonar-scanner\\sonar-scanner-5.0.1.3006-windows
                     SET PATH=%SONAR_SCANNER_HOME%\\bin;%PATH%"
 
-                    sonar-scanner -Dsonar.token=%SONAR_TOKEN%
+                    echo JAVA_HOME is %JAVA_HOME%
+                    java -version
+
+                    sonar-scanner -Dsonar.login=%SONAR_TOKEN%
                     '''
                 }
             }
         }
-
         stage('Security') {
             steps {
                 withCredentials([string(credentialsId: 'SNYK_TOKEN', variable: 'SNYK_TOKEN')]) {
