@@ -22,12 +22,8 @@ pipeline {
   steps {
     echo '📦 Installing dependencies'
     bat 'npm install'
-
     echo '🚀 Starting server in background'
-    bat '''
-   
-    start /b node server.js
-    '''
+    bat 'start /b node server.js'
 
     echo '⏳ Waiting for server to be ready...'
    
