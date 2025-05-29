@@ -18,28 +18,35 @@ pipeline {
             }
         }
 
-       stage('Test') {
-    steps {
-        echo '🧪 Installing dependencies and starting server...'
-        bat 'npm install'
+      stage('Test') {
+  steps {
+    echo '📦 Installing dependencies'
+    bat 'npm install'
 
-        echo '🚀 Starting server in background...'
-        bat 'start /b node server.js'
+    echo '🚀 Starting server in background'
+    bat '''
+    FOR /F "tokens=5" %%a IN ('netstat -aon ^| findstr :4910 ^| findstr LISTENING') DO (
+        taskkill /F /PID %%a || echo "No existing process on port 4910"
+    )
+    start /B node server.js
+    '''
 
-        echo '⏳ Waiting for server to be ready...'
-        bat 'npx wait-on http://localhost:4910'
+    echo '⏳ Waiting for server to be ready...'
+    bat 'timeout /T 15 /NOBREAK'
+    bat 'npx wait-on http://localhost:4910 --timeout 120000 --verbose'
 
-        echo '🧪 Running Mocha tests...'
-        bat 'npm test'
+    echo '🧪 Running Mocha tests'
+    bat 'npm test'
 
-        echo '🛑 Killing background Node server...'
-        bat '''
-        FOR /F "tokens=5" %%a IN ('netstat -aon ^| findstr :4910') DO (
-            IF NOT "%%a"=="0" taskkill /F /PID %%a
-        )
-        '''
-    }
+    echo '🧼 Cleaning up Node.js server'
+    bat '''
+    FOR /F "tokens=5" %%a IN ('netstat -aon ^| findstr :4910 ^| findstr LISTENING') DO (
+        taskkill /F /PID %%a || echo "Server already terminated"
+    )
+    '''
+  }
 }
+
 
 
 
