@@ -23,13 +23,6 @@ pipeline {
         echo '🧪 Installing dependencies...'
         bat 'npm install'
 
-        echo '🛠 Cleaning up any existing process on port 4910...'
-        bat '''
-        for /f "tokens=5" %%a in ('netstat -aon ^| findstr :4910') do (
-            taskkill /F /PID %%a
-        )
-        '''
-
         echo '🚀 Starting server in background...'
         bat 'start /B node server.js > server.log 2>&1'
 
