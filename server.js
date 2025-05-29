@@ -58,6 +58,9 @@ app.get('/api/student', (req, res) => {
     name: "Enugu Thirumal Reddy",
     studentId: "s224849242"
   });
+  res.send("Server Running");
+
+
 });
 
 var memberroute = require("./services/routes-member")
