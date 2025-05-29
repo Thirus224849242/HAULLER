@@ -23,10 +23,10 @@ pipeline {
         bat 'npm install'
 
         echo '🚀 Starting server in background...'
-        bat 'start /b node server.js'
+        bat 'node server.js'
 
         echo '⏳ Waiting for server to be ready...'
-        bat 'npx wait-on http://localhost:4910'
+        bat 'npx wait-on http://localhost:4910 --timeout 60000 --verbose'
 
         echo '🧪 Running Mocha tests...'
         bat 'npm test'
