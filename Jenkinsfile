@@ -34,9 +34,10 @@ pipeline {
 
         echo '🛑 Killing background Node server...'
         bat '''
-        for /f "tokens=5" %%a in ('netstat -aon ^| findstr :4910') do (
-            taskkill /F /PID %%a
-        )
+      for /F "tokens=5" %a in ('netstat -aon | findstr :4910') do (
+  if not "%a"=="0" taskkill /F /PID %a
+)
+
         '''
 
         echo '📜 Displaying server log for verification...'
