@@ -22,6 +22,13 @@ pipeline {
         echo '🧪 Installing dependencies and starting server...'
         bat 'npm install'
 
+           echo '🛠 Cleaning up any existing process...'
+        bat '''
+        FOR /F "tokens=5" %%a IN ('netstat -aon ^| findstr :4910') DO (
+            IF NOT "%%a"=="0" taskkill /F /PID %%a
+        )
+        '''
+
         echo '🚀 Starting server in background...'
         bat 'start /B node server.js'
 
