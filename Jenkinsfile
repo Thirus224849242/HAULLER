@@ -25,10 +25,8 @@ pipeline {
 
     echo '🚀 Starting server in background'
     bat '''
-    FOR /F "tokens=5" %%a IN ('netstat -aon ^| findstr :4910 ^| findstr LISTENING') DO (
-        taskkill /F /PID %%a || echo "No existing process on port 4910"
-    )
-    start /B node server.js
+   
+    start /b node server.js
     '''
 
     echo '⏳ Waiting for server to be ready...'
