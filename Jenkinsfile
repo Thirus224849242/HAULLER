@@ -32,8 +32,8 @@ pipeline {
     '''
 
     echo '⏳ Waiting for server to be ready...'
-    bat 'ping 127.0.0.1 -n 15 > nul'
-    bat 'npx wait-on http://localhost:4910 --timeout 120000 --verbose'
+   
+    bat 'npx wait-on http://localhost:4910'
 
     echo '🧪 Running Mocha tests'
     bat 'npm test'
