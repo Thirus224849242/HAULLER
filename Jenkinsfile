@@ -7,6 +7,7 @@ pipeline {
         DB_CONNECTION = 'mongodb://localhost:27017/test'
         SONAR_TOKEN = credentials('SONAR_TOKEN')
         SNYK_TOKEN = credentials('SNYK_TOKEN')
+        PORT='4910'
     }
 
     stages {
