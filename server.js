@@ -54,14 +54,12 @@ app.use("/guest",guest)
 app.use(express.static('upload'));
 app.use(express.static('public'));
 app.get('/api/student', (req, res) => {
-  res.json({
+  res.status(200).json({
     name: "Enugu Thirumal Reddy",
     studentId: "s224849242"
   });
-  res.send("Server Running");
-
-
 });
+
 
 var memberroute = require("./services/routes-member")
 
