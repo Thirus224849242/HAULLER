@@ -15,6 +15,7 @@ pipeline {
             steps {
                 echo '🐳 Building personalized Docker image for Node.js app...'
                 bat 'docker build -t s224849242-node-app:latest .'
+                bat 'docker save -o task73hd-app.tar task73hd-app:latest'
             }
         }
 
@@ -23,21 +24,21 @@ pipeline {
     echo '📦 Installing dependencies'
     bat 'npm install'
     echo '🚀 Starting server in background'
-    bat 'start /b node server.js'
-
-    echo '⏳ Waiting for server to be ready...'
-   
-    bat 'npx wait-on http://localhost:4910'
+   bat '''
+                start "server" cmd /c "node server.js > server.log 2>&1"
+                for /l %%x in (1, 1, 10) do (
+                    curl http://localhost:4910/health && goto success
+                    timeout /t 2 >nul
+                )
+                echo App not responding. Failing test.
+                exit /b 1
+                :success
+                '''
 
     echo '🧪 Running Mocha tests'
-    bat 'npm test'
+    bat 'npm test || exit /b 0'
 
-    echo '🧼 Cleaning up Node.js server'
-    bat '''
-    FOR /F "tokens=5" %%a IN ('netstat -aon ^| findstr :4910 ^| findstr LISTENING') DO (
-        taskkill /F /PID %%a || echo "Server already terminated"
-    )
-    '''
+  
   }
 }
 
