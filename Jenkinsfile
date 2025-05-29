@@ -27,7 +27,7 @@ pipeline {
    bat '''
                 start "server" cmd /c "node server.js > server.log 2>&1"
                 for /l %%x in (1, 1, 10) do (
-                    curl http://localhost:4910/health && goto success
+                    curl http://localhost:4910/api/student && goto success
                     timeout /t 2 >nul
                 )
                 echo App not responding. Failing test.
