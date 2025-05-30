@@ -13,6 +13,21 @@ pipeline {
     stages {
         stage('Build') {
             steps {
+
+                 script {
+                    writeFile file: '.env', text: """
+        PORT=4910
+        MONGO_URI=${env.MONGO_URI}
+        SENDGRID_API_KEY=${env.SENDGRID_API_KEY}
+        MAIL_FROM=${env.MAIL_FROM}
+        CLOUDINARY_CLOUD_NAME=${env.CLOUDINARY_CLOUD_NAME}
+        CLOUDINARY_API_KEY=${env.CLOUDINARY_API_KEY}
+        CLOUDINARY_API_SECRET=${env.CLOUDINARY_API_SECRET}
+        """
+                }
+                echo 'Verifying .env contents'
+                bat 'type .env'
+
                 echo '🐳 Building personalized Docker image for Node.js app...'
                 bat 'docker build -t s224849242-node-app:latest .'
                 bat 'docker save -o s224849242-node-app.tar s224849242-node-app:latest'
