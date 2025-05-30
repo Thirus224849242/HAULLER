@@ -13,8 +13,8 @@ pipeline {
         stage('Build') {
             steps {
                 echo '🐳 Building personalized Docker image for Node.js app...'
-                bat 'docker build -t s224849242-node-app:latest .'
-                bat 'docker save -o s224849242-node-app.tar s224849242-node-app:latest'
+                bat 'docker build -t s224849242-node-app1:latest .'
+                bat 'docker save -o s224849242-node-app1.tar s224849242-node-app1:latest'
             }
         }
 
@@ -80,8 +80,8 @@ pipeline {
             steps {
                 echo '🚀 Deploying the app to a Docker container test environment on port 4910...'
                 bat '''
-                docker rm -f hauller-test-app || echo "No existing container to remove"
-                docker run -d -p 4910:4910 --name hauller-test-app s224849242-node-app:latest
+                docker rm -f hauller-test-app1 || echo "No existing container to remove"
+                docker run -d -p 4910:4910 --name hauller-test-app1 s224849242-node-app1:latest
                 '''
             }
         }
@@ -90,7 +90,7 @@ pipeline {
     post {
         success {
             echo '✅ Build and test stages completed.'
-            archiveArtifacts artifacts: 's224849242-node-app.tar', fingerprint: true
+            archiveArtifacts artifacts: 's224849242-node-app1.tar', fingerprint: true
             archiveArtifacts artifacts: '*.json', fingerprint: true
             archiveArtifacts artifacts: 'snyk-error.log', fingerprint: true
         }
