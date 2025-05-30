@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 's224849242-node-app:latest'
+        DOCKER_IMAGE = 's224849242-node-app1:latest'
         SENDGRID_API_KEY = 'SG.dummykey'
         DB_CONNECTION = 'mongodb://localhost:27017/test'
         SONAR_TOKEN2 = credentials('SONAR_TOKEN2')
@@ -55,7 +55,7 @@ pipeline {
                     SET SONAR_SCANNER_HOME=%cd%\\sonar-scanner\\sonar-scanner-5.0.1.3006-windows
                     SET PATH=%SONAR_SCANNER_HOME%\\bin;%PATH%"
 
-                    sonar-scanner -Dsonar.login=%SONAR_TOKEN%
+                    sonar-scanner -Dsonar.login=%SONAR_TOKEN2%
                     '''
                 }
             }
