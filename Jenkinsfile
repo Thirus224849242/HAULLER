@@ -32,12 +32,7 @@ pipeline {
         echo '🧪 Running Mocha tests...'
         bat 'npm test'
 
-        echo '🛑 Killing background Node server...'
-        bat '''
-        FOR /F "tokens=5" %%a IN ('netstat -aon ^| findstr :4910') DO (
-            IF NOT "%%a"=="0" taskkill /F /PID %%a
-        )
-        '''
+      
     }
 }
 
