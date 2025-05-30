@@ -14,6 +14,7 @@ pipeline {
             steps {
                 echo '🐳 Building personalized Docker image for Node.js app...'
                 bat 'docker build -t s224849242-node-app:latest .'
+                bat 'docker save -o task73hd-app.tar task73hd-app:latest'
             }
         }
 
@@ -70,7 +71,7 @@ pipeline {
                 withCredentials([string(credentialsId: 'SNYK_TOKEN', variable: 'SNYK_TOKEN')]) {
                     bat 'npm install -g snyk'
                     bat "snyk auth %SNYK_TOKEN%"
-                    bat "snyk test --all-projects --severity-threshold=low || exit 0"
+                    bat "snyk test --all-projects --severity-threshold=low --json > snyk-report.json 2> snyk-error.log || exit 0"
                 }
             }
         }
@@ -87,8 +88,11 @@ pipeline {
     }
 
     post {
-        always {
+        success {
             echo '✅ Build and test stages completed.'
+            archiveArtifacts artifacts: 's224849242-node-app.tar', fingerprint: true
+            archiveArtifacts artifacts: '*.json', fingerprint: true
+            archiveArtifacts artifacts: 'snyk-error.log', fingerprint: true
         }
     }
 }
