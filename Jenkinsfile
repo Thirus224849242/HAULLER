@@ -7,57 +7,38 @@ pipeline {
         DB_CONNECTION = 'mongodb://localhost:27017/test'
         SONAR_TOKEN = credentials('SONAR_TOKEN')
         SNYK_TOKEN = credentials('SNYK_TOKEN')
-        PORT='4910'
     }
 
     stages {
         stage('Build') {
             steps {
-
-                 script {
-                    writeFile file: '.env', text: """
-        PORT=4910
-        MONGO_URI=${env.MONGO_URI}
-        SENDGRID_API_KEY=${env.SENDGRID_API_KEY}
-        MAIL_FROM=${env.MAIL_FROM}
-        CLOUDINARY_CLOUD_NAME=${env.CLOUDINARY_CLOUD_NAME}
-        CLOUDINARY_API_KEY=${env.CLOUDINARY_API_KEY}
-        CLOUDINARY_API_SECRET=${env.CLOUDINARY_API_SECRET}
-        """
-                }
-                echo 'Verifying .env contents'
-                bat 'type .env'
-
                 echo '🐳 Building personalized Docker image for Node.js app...'
                 bat 'docker build -t s224849242-node-app:latest .'
-                bat 'docker save -o s224849242-node-app.tar s224849242-node-app:latest'
             }
         }
 
-      stage('Test') {
-  steps {
-    echo '📦 Installing dependencies'
-    bat 'npm install'
-    echo '🚀 Starting server in background'
-   bat '''
-                start "server" cmd /c "node server.js > server.log 2>&1"
-                for /l %%x in (1, 1, 10) do (
-                    curl http://localhost:4910/api/student && goto success
-                    timeout /t 2 >nul
-                )
-                echo App not responding. Failing test.
-                exit /b 1
-                :success
-                '''
+        stage('Test') {
+    steps {
+        echo '🧪 Installing dependencies and starting server...'
+        bat 'npm install'
 
-    echo '🧪 Running Mocha tests'
-    bat 'npm test || exit /b 0'
+        echo '🚀 Starting server in background...'
+        bat 'start /b node server.js'
 
-  
-  }
+        echo '⏳ Waiting for server to be ready...'
+        bat 'npx wait-on http://localhost:4910'
+
+        echo '🧪 Running Mocha tests...'
+        bat 'npm test'
+
+        echo '🛑 Killing background Node server...'
+        bat '''
+        FOR /F "tokens=5" %%a IN ('netstat -aon ^| findstr :4910') DO (
+            IF NOT "%%a"=="0" taskkill /F /PID %%a
+        )
+        '''
+    }
 }
-
-
 
 
         stage('SonarCloud Analysis') {
