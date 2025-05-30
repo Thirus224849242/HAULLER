@@ -14,7 +14,7 @@ pipeline {
             steps {
                 echo '🐳 Building personalized Docker image for Node.js app...'
                 bat 'docker build -t s224849242-node-app:latest .'
-                bat 'docker save -o task73hd-app.tar task73hd-app:latest'
+                bat 'docker save -o s224849242-node-app.tar s224849242-node-app:latest'
             }
         }
 
